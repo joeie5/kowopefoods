@@ -46,6 +46,8 @@ def login(form_data: schemas.AdminLogin, db: Session = Depends(get_db)):
 def read_admin_me(current_admin: Admin = Depends(get_current_admin)):
     return {"username": current_admin.username, "email": current_admin.email}
 
+from utils.storage import upload_to_supabase
+
 @router.post("/admin/upload")
 async def upload_image(
     file: UploadFile = File(...), 
@@ -53,25 +55,12 @@ async def upload_image(
 ):
     print(f"DEBUG: Starting upload for {file.filename} by {current_admin.username}")
     try:
-        # Ensure directory exists
-        upload_dir = "uploads"
-        if not os.path.exists(upload_dir):
-            os.makedirs(upload_dir)
-            print("DEBUG: Created uploads directory")
-            
-        # Generate unique filename
-        ext = os.path.splitext(file.filename)[1]
-        filename = f"{uuid.uuid4()}{ext}"
-        file_path = os.path.join(upload_dir, filename)
-        print(f"DEBUG: Saving to {file_path}")
-        
-        # Save file
+        # Read file content
         contents = await file.read()
-        with open(file_path, "wb") as f:
-            f.write(contents)
-        print("DEBUG: File written successfully")
+        
+        # Upload to Supabase Storage
+        url = await upload_to_supabase(contents, file.filename, file.content_type)
             
-        url = f"http://localhost:9000/uploads/{filename}"
         print(f"DEBUG: Returning URL: {url}")
         return {"url": url}
     except Exception as e:

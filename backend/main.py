@@ -8,9 +8,10 @@ load_dotenv()
 
 app = FastAPI(title="Kowope Foods API", version="1.0.0")
 
-# Static files for uploads
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Static files (Only if they exist, primarily for local dev)
+if os.path.exists("uploads"):
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 # CORS Configuration
 app.add_middleware(
