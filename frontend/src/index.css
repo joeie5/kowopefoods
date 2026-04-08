@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --color-earth: #1A0A00;
+  --color-gold: #C9933A;
+  --color-gold-light: #E8B96A;
+  --color-cream: #FAF5EE;
+  --color-clay: #8B4513;
+  --color-green: #2D5016;
+  --color-grey-100: #F5F0EA;
+  --color-grey-200: #E8E0D5;
+  --color-grey-500: #9E8E78;
+  --color-grey-700: #5A4A3A;
+
+  --font-serif: "Outfit", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  --radius-card: 16px;
+  --radius-btn: 8px;
+
+  --shadow-card: 0 4px 24px rgba(26,10,0,0.08);
+  --shadow-hover: 0 12px 40px rgba(26,10,0,0.16);
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+  body {
+    @apply bg-cream text-earth font-sans;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gold text-white px-6 py-3 rounded-btn font-semibold hover:bg-gold-light transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply border border-gold text-gold px-6 py-3 rounded-btn font-semibold hover:bg-gold/10 transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-white rounded-card shadow-card hover:shadow-hover transition-all duration-300 overflow-hidden;
+  }
+}

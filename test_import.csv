@@ -1,0 +1,3 @@
+Name,CategoryId,SalePriceExTax,Barcode,Description,Stock
+"Test Product 1","Vegetables",10.99,"TEST-SKU-001","A test vegetable product",50
+"Test Product 2","Grains",5.50,"TEST-SKU-002","A test grain product",100
