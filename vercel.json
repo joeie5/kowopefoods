@@ -1,0 +1,34 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist",
+        "installCommand": "npm install --legacy-peer-deps"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "backend/main.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "frontend/$1"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/frontend/index.html",
+      "permanent": false
+    }
+  ]
+}
