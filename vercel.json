@@ -23,12 +23,5 @@
       "source": "/(.*)",
       "destination": "frontend/$1"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/frontend/index.html",
-      "permanent": false
-    }
   ]
 }
