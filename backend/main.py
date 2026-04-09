@@ -32,6 +32,7 @@ app.add_middleware(
 )
 
 @app.get("/")
+@app.get("/api")
 def read_root():
     return {"message": "Welcome to Kowope Foods API - Premium African Diaspora Ecommerce"}
 
