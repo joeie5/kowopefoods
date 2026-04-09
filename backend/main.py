@@ -1,14 +1,18 @@
 import os
 import sys
+import traceback
 
-# Add the current directory to sys.path to resolve local imports in Vercel
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# 1. PATH CONFIGURATION (Must be absolute first)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 
+# 2. ENVIRONMENT LOADING
 load_dotenv()
 
 app = FastAPI(title="Kowope Foods API", version="1.0.0")
@@ -42,10 +46,22 @@ def diag_env():
         "note": "If keys are missing, check Vercel Project Settings > Environment Variables and REDEPLOY."
     }
 
-import routers.public as public
-import routers.admin as admin
-import routers.import_products as import_products
+# 3. SECURE ROUTER IMPORTS (With pinpoint logging for Vercel troubleshooting)
+try:
+    import routers.public as public
+    import routers.admin as admin
+    import routers.import_products as import_products
 
-app.include_router(public.router, prefix="/api", tags=["Public"])
-app.include_router(admin.router, prefix="/api", tags=["Admin"])
-app.include_router(import_products.router, prefix="/api", tags=["Admin"])
+    app.include_router(public.router, prefix="/api", tags=["Public"])
+    app.include_router(admin.router, prefix="/api", tags=["Admin"])
+    app.include_router(import_products.router, prefix="/api", tags=["Admin"])
+except Exception as e:
+    print("--- IMPORT ERROR DETECTED ---")
+    print(f"Error type: {type(e).__name__}")
+    print(f"Error message: {str(e)}")
+    print("Full Traceback:")
+    traceback.print_exc()
+    print("------------------------------")
+    # We re-raise to ensure Vercel knows the function failed to start
+    raise e
+
