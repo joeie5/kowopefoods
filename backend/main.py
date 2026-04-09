@@ -1,4 +1,9 @@
 import os
+import sys
+
+# Add the current directory to sys.path to resolve local imports in Vercel
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
