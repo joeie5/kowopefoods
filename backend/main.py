@@ -48,20 +48,26 @@ def diag_env():
 
 # 3. SECURE ROUTER IMPORTS (With pinpoint logging for Vercel troubleshooting)
 try:
+    print("STARTUP: Importing public router...")
     import routers.public as public
-    import routers.admin as admin
-    import routers.import_products as import_products
-
     app.include_router(public.router, prefix="/api", tags=["Public"])
+    
+    print("STARTUP: Importing admin router...")
+    import routers.admin as admin
     app.include_router(admin.router, prefix="/api", tags=["Admin"])
+    
+    print("STARTUP: Importing product import router...")
+    import routers.import_products as import_products
     app.include_router(import_products.router, prefix="/api", tags=["Admin"])
+    
+    print("STARTUP: All routers loaded successfully.")
 except Exception as e:
-    print("--- IMPORT ERROR DETECTED ---")
+    print("--- CRITICAL STARTUP ERROR DETECTED ---")
     print(f"Error type: {type(e).__name__}")
     print(f"Error message: {str(e)}")
     print("Full Traceback:")
     traceback.print_exc()
-    print("------------------------------")
+    print("---------------------------------------")
     # We re-raise to ensure Vercel knows the function failed to start
     raise e
 

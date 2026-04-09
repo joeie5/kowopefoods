@@ -6,15 +6,26 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY") # Use service key for bypass RLS if needed, or anon key if bucket is public
+SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_KEY") 
 BUCKET_NAME = "uploads"
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: Client = None
+
+if SUPABASE_URL and SUPABASE_KEY:
+    try:
+        supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print("STORAGE: Supabase client initialized successfully.")
+    except Exception as e:
+        print(f"STORAGE ERROR: Failed to initialize Supabase client: {e}")
+else:
+    print("STORAGE WARNING: SUPABASE_URL or SUPABASE_SERVICE_KEY missing. Uploads will fail.")
 
 async def upload_to_supabase(file_content: bytes, filename: str, content_type: str):
     """
     Uploads a file to Supabase Storage and returns the public URL.
     """
+    if not supabase:
+        raise Exception("Supabase storage client not initialized. Check environment variables.")
     ext = os.path.splitext(filename)[1]
     unique_filename = f"{uuid.uuid4()}{ext}"
     
