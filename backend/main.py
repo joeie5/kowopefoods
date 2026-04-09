@@ -26,6 +26,17 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to Kowope Foods API - Premium African Diaspora Ecommerce"}
 
+@app.get("/api/diag/env")
+def diag_env():
+    """Diagnostic endpoint to check for env var keys (values are hidden for security)."""
+    keys = [k for k in os.environ.keys() if any(x in k for x in ["SUPABASE", "DATABASE", "POSTGRES", "STRIPE"])]
+    return {
+        "found_keys": keys,
+        "database_url_present": "DATABASE_URL" in os.environ or "POSTGRES_URL" in os.environ,
+        "supabase_url_present": "SUPABASE_URL" in os.environ,
+        "note": "If keys are missing, check Vercel Project Settings > Environment Variables and REDEPLOY."
+    }
+
 import routers.public as public
 import routers.admin as admin
 import routers.import_products as import_products

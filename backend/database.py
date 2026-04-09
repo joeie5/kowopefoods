@@ -6,7 +6,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./kowopefoods.db")
+# Prioritize DATABASE_URL, then POSTGRES_URL (Vercel), finally fallback to SQLite
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL") or "sqlite:///./kowopefoods.db"
+
+# Mask the URL for safe logging
+def get_masked_url(url: str):
+    if not url: return "None"
+    if "@" in url:
+        parts = url.split("@")
+        return f"{parts[0].split(':')[0]}://****:****@{parts[1]}"
+    return url
+
+print(f"DATABASE: Initializing with {get_masked_url(SQLALCHEMY_DATABASE_URL)}")
 
 if SQLALCHEMY_DATABASE_URL.startswith("sqlite"):
     engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
