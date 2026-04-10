@@ -60,6 +60,8 @@ class Product(ProductBase):
     review_count: int = 0
     created_at: datetime
     updated_at: Optional[datetime] = None
+    category: Optional[Category] = None
+    
     class Config:
         from_attributes = True
 
