@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
-import { Star, Truck, ShieldCheck, CheckCircle, ChevronRight, Minus, Plus, ShoppingBag, Loader2, ArrowLeft } from 'lucide-react'
+import { Star, Truck, ShieldCheck, CheckCircle, ChevronRight, Minus, Plus, ShoppingBag, Loader2, ArrowLeft, Tag } from 'lucide-react'
 import { fetchProductBySlug } from '../services/api'
 import { useCartStore } from '../store/useStore'
 import { toast } from 'react-hot-toast'
@@ -12,7 +12,6 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [quantity, setQuantity] = useState(1)
-  const [activeTab, setActiveTab] = useState('Description')
   const [mainImage, setMainImage] = useState('')
   const [selectedVariant, setSelectedVariant] = useState<any>(null)
   
@@ -264,88 +263,89 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          <div className="mt-24 bg-white rounded-3xl shadow-card p-8 md:p-12 border border-grey-100">
-            <div className="flex flex-wrap gap-8 md:gap-12 border-b border-grey-100 mb-10 overflow-x-auto scrollbar-hide">
-              {['Description', 'Specifications', 'Reviews'].map((tab) => (
-                 <button 
-                   key={tab} 
-                   onClick={() => setActiveTab(tab)} 
-                   className={`pb-4 text-xs font-bold uppercase tracking-widest relative transition-all ${activeTab === tab ? 'text-gold' : 'text-grey-500'}`}
-                 >
-                    {tab}
-                    {activeTab === tab && <div className="absolute bottom-[-1px] left-0 right-0 h-1 bg-gold rounded-full"></div>}
-                 </button>
-              ))}
+          <div className="mt-20 flex flex-col lg:flex-row gap-12">
+            {/* Description Column */}
+            <div className="lg:w-2/3 space-y-10">
+               <div className="bg-white rounded-3xl shadow-card p-8 md:p-12 border border-grey-100">
+                  <h2 className="text-2xl font-serif text-earth font-bold mb-8 flex items-center gap-3">
+                    <ArrowLeft size={24} className="rotate-180 text-gold" /> Product Description
+                  </h2>
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: product.full_description_html }} 
+                    className="prose prose-gold max-w-none text-grey-700 leading-relaxed text-lg" 
+                  />
+               </div>
+               
+               {/* Reviews could go here later */}
             </div>
 
-            <div className="max-w-4xl prose prose-gold flex flex-col gap-6">
-               {activeTab === 'Description' && (
-                 <div 
-                   dangerouslySetInnerHTML={{ __html: product.full_description_html }} 
-                   className="text-grey-700 leading-relaxed text-lg" 
-                 />
-               )}
-                {activeTab === 'Specifications' && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     <div className="p-6 bg-cream/50 rounded-2xl border border-gold/10 flex items-start gap-4">
-                        <div className="bg-white p-3 rounded-xl shadow-sm border border-gold/5">
-                          <Tag size={20} className="text-gold" />
+            {/* Specifications Sidebar */}
+            <div className="lg:w-1/3 space-y-8">
+               <div className="bg-earth text-white rounded-3xl shadow-xl p-8 border border-white/10 sticky top-8">
+                  <h2 className="text-xl font-serif font-bold mb-8 flex items-center gap-3">
+                    <Tag size={20} className="text-gold" /> Specifications
+                  </h2>
+                  
+                  <div className="space-y-6">
+                     <div className="flex items-center gap-4 group">
+                        <div className="bg-white/10 p-3 rounded-xl group-hover:bg-gold/20 transition-colors">
+                          <Tag size={18} className="text-gold" />
                         </div>
                         <div>
-                          <span className="block text-[10px] uppercase tracking-widest text-grey-500 font-bold mb-1">SKU</span>
-                          <span className="text-earth font-bold font-mono text-lg">{product.sku}</span>
+                          <span className="block text-[10px] uppercase tracking-widest text-white/50 font-bold mb-0.5">SKU</span>
+                          <span className="font-mono text-sm font-bold">{product.sku}</span>
                         </div>
                      </div>
-                     <div className="p-6 bg-cream/50 rounded-2xl border border-gold/10 flex items-start gap-4">
-                        <div className="bg-white p-3 rounded-xl shadow-sm border border-gold/5">
-                          <Truck size={20} className="text-gold" />
+
+                     <div className="flex items-center gap-4 group">
+                        <div className="bg-white/10 p-3 rounded-xl group-hover:bg-gold/20 transition-colors">
+                          <ShieldCheck size={18} className="text-gold" />
                         </div>
                         <div>
-                          <span className="block text-[10px] uppercase tracking-widest text-grey-500 font-bold mb-1">Origin</span>
-                          <span className="text-earth font-bold text-lg">{product.country_of_origin}</span>
-                        </div>
-                     </div>
-                     <div className="p-6 bg-cream/50 rounded-2xl border border-gold/10 flex items-start gap-4">
-                        <div className="bg-white p-3 rounded-xl shadow-sm border border-gold/5">
-                          <ShoppingBag size={20} className="text-gold" />
-                        </div>
-                        <div>
-                          <span className="block text-[10px] uppercase tracking-widest text-grey-500 font-bold mb-1">Category</span>
-                          <span className="text-earth font-bold text-lg">{product.category?.name || 'N/A'}</span>
-                        </div>
-                     </div>
-                     <div className="p-6 bg-cream/50 rounded-2xl border border-gold/10 flex items-start gap-4">
-                        <div className="bg-white p-3 rounded-xl shadow-sm border border-gold/5">
-                          <ShieldCheck size={20} className="text-gold" />
-                        </div>
-                        <div>
-                          <span className="block text-[10px] uppercase tracking-widest text-grey-500 font-bold mb-1">Weight</span>
-                          <span className="text-earth font-bold text-lg">
+                          <span className="block text-[10px] uppercase tracking-widest text-white/50 font-bold mb-0.5">Weight</span>
+                          <span className="text-sm font-bold">
                             {product.weight_grams >= 1000 
                               ? `${(product.weight_grams / 1000).toFixed(1)}kg` 
                               : `${product.weight_grams}g`}
                           </span>
                         </div>
                      </div>
-                     
+
+                     <div className="flex items-center gap-4 group">
+                        <div className="bg-white/10 p-3 rounded-xl group-hover:bg-gold/20 transition-colors">
+                          <Truck size={18} className="text-gold" />
+                        </div>
+                        <div>
+                          <span className="block text-[10px] uppercase tracking-widest text-white/50 font-bold mb-0.5">Origin</span>
+                          <span className="text-sm font-bold">{product.country_of_origin}</span>
+                        </div>
+                     </div>
+
+                     <div className="flex items-center gap-4 group">
+                        <div className="bg-white/10 p-3 rounded-xl group-hover:bg-gold/20 transition-colors">
+                          <ShoppingBag size={18} className="text-gold" />
+                        </div>
+                        <div>
+                          <span className="block text-[10px] uppercase tracking-widest text-white/50 font-bold mb-0.5">Category</span>
+                          <span className="text-sm font-bold">{product.category?.name || 'N/A'}</span>
+                        </div>
+                     </div>
+
                      {product.dietary_tags && product.dietary_tags.length > 0 && (
-                       <div className="md:col-span-2 p-6 bg-cream/50 rounded-2xl border border-gold/10 flex flex-col gap-4">
-                          <div className="flex items-center gap-3">
-                            <CheckCircle size={20} className="text-gold" />
-                            <span className="text-xs font-bold uppercase tracking-widest text-earth">Dietary Information</span>
-                          </div>
+                       <div className="pt-6 border-t border-white/10 space-y-4">
+                          <span className="block text-[10px] uppercase tracking-widest text-white/50 font-bold">Dietary Tags</span>
                           <div className="flex flex-wrap gap-2">
-                            {product.dietary_tags.map((tag: string, i: number) => (
-                              <span key={i} className="bg-white px-4 py-2 rounded-xl text-sm font-bold text-earth border border-gold/10 shadow-sm flex items-center gap-2">
-                                <CheckCircle size={14} className="text-green-600" />
-                                {tag}
-                              </span>
-                            ))}
+                             {product.dietary_tags.map((tag: string, i: number) => (
+                               <span key={i} className="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-bold border border-white/5 flex items-center gap-2">
+                                 <CheckCircle size={12} className="text-gold" />
+                                 {tag}
+                               </span>
+                             ))}
                           </div>
                        </div>
                      )}
                   </div>
-                )}
+               </div>
             </div>
           </div>
         </div>
